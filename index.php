@@ -2,7 +2,7 @@
 $servername="localhost";
 $username="root";
 $password="";
-$db="uploading";
+$db="upload";
 $con=mysqli_connect($servername,$username,$password,$db);
 if(!$con){
     die("connection failed".mysqli_connect_error());
@@ -13,15 +13,14 @@ if (isset($_FILES["files"])) {
     $type=$_FILES["files"]["type"];
     $size=$_FILES["files"]["size"];
     $path=$_FILES["files"]["full_path"];
-    
-} 
-$upload=move_uploaded_file($tmpname,"images/".$name);
-if($upload){
-    $sqlinsert="INSERT INTO `file`(`id`, `name`, `tmpname`, `type`, `size`, `path`) VALUES ('$name','$tmpname','$type','$size','$path')";
-    $res=mysqli_query($con,$sqlinsert);
-    if($res){
+    $upload=move_uploaded_file($tmpname,"images/".$name);
+    if($upload){
+        $sqlinsert="INSERT INTO `info`( `name`, `tmpname`, `type`, `size`, `path`) VALUES ('$name','$tmpname','$type','$size','$path')";
+        $res=mysqli_query($con,$sqlinsert);
+        if($res){
         echo"uploaded";
     }
+}
 }
 ?>
 <!DOCTYPE html>
@@ -35,11 +34,15 @@ if($upload){
     <form action="index.php" method="post" enctype="multipart/form-data">
         <label for="uf">FILE UPLOADING</label>
         <input type="file" name="files" id="uf">
-        <input type="file" name="images"><br><br>
-        <input type="submit" name="submit"><br><br>
+        <input type="submit" name="submit" >
     </form>
 </body>
 </html>
+
+
+
+
+
 
 
 
