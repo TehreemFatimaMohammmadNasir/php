@@ -1,123 +1,46 @@
 <?php
-
-$apikey = '$2y$10$BylaBcXs5Lw7ZOtYmQ3PXO1x15zpp26oc1FeGktdmF6YeYoRd88e';
-$response = file_get_contents("https://hadithapi.com/api/books?apiKey=$apikey");
-
-$response = json_decode($response, true);
-
-// print_r($response["books"]);
-
-$hadithbooks = $response["books"];
-
-
-?>
-
-
-
-<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Aref+Ruqaa&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap" rel="stylesheet">
-
-
-    <style>
-        body {
-        font-family: "jameel";
-        background-color: blanchedalmond;
-        }
-
-        @font-face {
-            font-family: "jameel";
-            src: url(fonts/jameel.ttf);
-        }
-        .btn {
-    background-color: salmon; 
-    border-color: #944547; 
+$servername="localhost";
+$username="root";
+$password="";
+$db="uploading";
+$con=mysqli_connect($servername,$username,$password,$db);
+if(!$con){
+    die("connection failed".mysqli_connect_error());
 }
-
-.btn:hover {
-    background-color: #B57281; 
-    color:  #E1AD01; 
-    border-color: #944547;
-}
- .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-   
-    </style>
-
-</head>
-
-<body>
+if (isset($_FILES["files"])) {
+    $name=$_FILES["files"]["name"];
+    $tmpname=$_FILES["files"]["tmp_name"];
+    $type=$_FILES["files"]["type"];
+    $size=$_FILES["files"]["size"];
+    $path=$_FILES["files"]["full_path"];
     
-        <?php
-         include 'navbar.php';
-
-    ?>
-    <div class="container">
-        <div class="row">
-            <?php
-            foreach ($hadithbooks as  $value) {
-
-
-
-                echo '
-                  <div class="col-md-4 col-sm-6 mb-4">
-
-                <div class="card" style="width: 18rem;">
-                
-                    <div class="card-body">
-                        <h5 class="card-title">' . $value["bookName"] . '</h5>
-                        <p class="card-text">  ' . $value["writerName"] . '</p>
-                        <p class="card-text"> Hadith Chapters' . $value["chapters_count"] . ' | Total Hadith ' . $value["hadiths_count"] . '</p>
-                           <form action="chapters.php" method="post">
-
-
-                <input type="hidden"  name="booksSlug" value="' . $value['bookSlug'] . '">
-
-                <input type="submit" class="btn btn-dark" value="Read Chapters">
-
-
-
-            </form>
-                    </div>
-                </div>
-            </div>
-                
-                
-                ';
-            }
-
-            ?>
-
-
-
-
-
-
-
-
-        </div>
-
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+} 
+$upload=move_uploaded_file($tmpname,"images/".$name);
+if($upload){
+    $sqlinsert="INSERT INTO `file`(`id`, `name`, `tmpname`, `type`, `size`, `path`) VALUES ('$name','$tmpname','$type','$size','$path')";
+    $res=mysqli_query($con,$sqlinsert);
+    if($res){
+        echo"uploaded";
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="index.php" method="post" enctype="multipart/form-data">
+        <label for="uf">FILE UPLOADING</label>
+        <input type="file" name="files" id="uf">
+        <input type="file" name="images"><br><br>
+        <input type="submit" name="submit"><br><br>
+    </form>
 </body>
-
 </html>
+
+
+
+
